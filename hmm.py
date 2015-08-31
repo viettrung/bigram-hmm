@@ -1,4 +1,5 @@
 import os
+import time
 
 
 class Brown:
@@ -15,48 +16,52 @@ class Brown:
         print('Studying from the Brown corpus...')
         listing = os.listdir(brown_folder_path)
         for infile in listing:
-            with open(brown_folder_path + "/" + infile) as file:
-                lines = file.readlines()
-                for line in lines:
-                    if line.strip():
-                        line = "START/START " + line + " END/END"
-                        previous_tag = 'START'
-                        for word_tag in line.split():
-                            self.word_tag_pairs.append(word_tag)
-                            if word_tag in self.word_tag_dictionary:
-                                self.word_tag_dictionary[word_tag] += 1
-                            else:
-                                self.word_tag_dictionary[word_tag] = 1
+            if len(infile) is 4:
+                with open(brown_folder_path + "/" + infile) as file:
+                    lines = file.readlines()
+                    for line in lines:
+                        if line.strip():
+                            line = "START/START " + line + " END/END"
+                            previous_tag = 'START'
+                            for word_tag in line.split():
+                                self.word_tag_pairs.append(word_tag)
+                                if word_tag in self.word_tag_dictionary:
+                                    self.word_tag_dictionary[word_tag] += 1
+                                else:
+                                    self.word_tag_dictionary[word_tag] = 1
 
-                            split_word_tag = word_tag.rsplit('/', 1)
-                            word_temp = split_word_tag[0]
-                            tag_temp = split_word_tag[1]
-                            self.words.append(word_temp)
-                            self.tags.append(tag_temp)
+                                split_word_tag = word_tag.rsplit('/', 1)
+                                word_temp = split_word_tag[0]
+                                tag_temp = split_word_tag[1]
+                                self.words.append(word_temp)
+                                self.tags.append(tag_temp)
 
-                            transaction_tag = previous_tag + '_' + tag_temp
-                            if transaction_tag in self.transaction_tag_dictionary:
-                                self.transaction_tag_dictionary[transaction_tag] += 1
-                            else:
-                                self.transaction_tag_dictionary[transaction_tag] = 1
+                                transaction_tag = previous_tag + '_' + tag_temp
+                                if transaction_tag in self.transaction_tag_dictionary:
+                                    self.transaction_tag_dictionary[transaction_tag] += 1
+                                else:
+                                    self.transaction_tag_dictionary[transaction_tag] = 1
 
-                            previous_tag = tag_temp
+                                previous_tag = tag_temp
 
-                            if word_temp in self.word_dictionary:
-                                self.word_dictionary[word_temp] += 1
-                            else:
-                                self.word_dictionary[word_temp] = 1
+                                if word_temp in self.word_dictionary:
+                                    self.word_dictionary[word_temp] += 1
+                                else:
+                                    self.word_dictionary[word_temp] = 1
 
-                            if tag_temp in self.tag_dictionary:
-                                self.tag_dictionary[tag_temp] += 1
-                            else:
-                                self.distinct_tags.append(tag_temp)
-                                self.tag_dictionary[tag_temp] = 1
+                                if tag_temp in self.tag_dictionary:
+                                    self.tag_dictionary[tag_temp] += 1
+                                else:
+                                    self.distinct_tags.append(tag_temp)
+                                    self.tag_dictionary[tag_temp] = 1
             file.close()
 
         print('done!')
 
+start = time.time()
 brown = Brown('brown')
+end = time.time()
+print('elapsed time:', end - start)
 
 
 def emission_prob(word, tagg):
